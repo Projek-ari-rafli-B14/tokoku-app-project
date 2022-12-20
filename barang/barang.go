@@ -18,7 +18,7 @@ type BarangMenu struct {
 
 type BarangInterface interface {
 	Insert(newBarang Barang) (bool, error)
-	Select() ([]Barang, error)
+	Select(id int) ([]Barang, error)
 	Delete(barcode int) (bool, error)
 }
 
@@ -82,14 +82,23 @@ func (bm *BarangMenu) Insert(newBarang Barang) (bool, error) {
 	return true, nil
 }
 
-func (bm *BarangMenu) Select() ([]Barang, error) {
+func (bm *BarangMenu) Select(barcode int) ([]Barang, error) {
+
 	var (
 		selectBarangQry *sql.Rows
 		err             error
 	)
-	selectBarangQry, err = bm.db.Query(`
-	SELECT barcode, nama, stok
-	FROM barang;`)
+	if barcode == 0 {
+		selectBarangQry, err = bm.db.Query(`
+		SELECT barcode, nama, stok
+		FROM barang;`)
+	} else {
+		selectBarangQry, err = bm.db.Query(`
+		SELECT barcode, nama, stok
+		FROM barang
+		WHERE barcode = ?;`, barcode)
+	}
+
 	if err != nil {
 		log.Println("select barang", err.Error())
 		return nil, errors.New("select barang error")
