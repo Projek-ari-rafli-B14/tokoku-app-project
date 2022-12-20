@@ -83,6 +83,7 @@ func (bm *BarangMenu) Insert(newBarang Barang) (bool, error) {
 }
 
 func (bm *BarangMenu) Select(barcode int) ([]Barang, error) {
+
 	var (
 		selectBarangQry *sql.Rows
 		err             error
